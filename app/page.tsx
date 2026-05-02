@@ -1,128 +1,143 @@
 export default function Home() {
+  const pages = [
+    { href: '/landing', emoji: '🏠', label: 'Landing Page', desc: 'Your main marketing page' },
+    { href: '/store', emoji: '🛍️', label: 'Store', desc: 'Customer shopping experience' },
+    { href: '/checkout', emoji: '💳', label: 'Checkout', desc: 'Payment & order placement' },
+    { href: '/loyalty', emoji: '🪙', label: 'Loyalty Program', desc: 'Member points & rewards' },
+    { href: '/payment', emoji: '💰', label: 'Payment Methods', desc: 'Global payment options' },
+    { href: '/admin', emoji: '⚙️', label: 'Admin Panel', desc: 'Manage your store' },
+  ]
+
   return (
     <main style={{
-      fontFamily: "'Georgia', serif",
-      background: "#faf7f4",
-      minHeight: "100vh",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      flexDirection: "column",
-      textAlign: "center",
-      padding: "2rem",
-      color: "#3d1f0a"
+      fontFamily: 'Georgia, serif',
+      background: '#faf7f4',
+      minHeight: '100vh',
+      padding: '2rem 1.5rem',
+      color: '#3d1f0a'
     }}>
-      <div style={{
-        background: "#3d1f0a",
-        color: "#fff5e8",
-        padding: "1rem 2rem",
-        borderRadius: "999px",
-        fontSize: "12px",
-        letterSpacing: "0.1em",
-        marginBottom: "1.5rem",
-        textTransform: "uppercase"
-      }}>
-        🍂 Now live
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+        <div style={{
+          display: 'inline-block',
+          background: '#3d1f0a',
+          color: '#fff5e8',
+          padding: '6px 20px',
+          borderRadius: '999px',
+          fontSize: '11px',
+          letterSpacing: '0.1em',
+          marginBottom: '1.5rem',
+          fontFamily: 'sans-serif',
+          textTransform: 'uppercase'
+        }}>🍂 Live on Vercel</div>
+
+        <h1 style={{
+          fontSize: 'clamp(2.5rem, 8vw, 4.5rem)',
+          fontWeight: '600',
+          lineHeight: '1',
+          marginBottom: '0.5rem'
+        }}>Online</h1>
+        <h1 style={{
+          fontSize: 'clamp(2.5rem, 8vw, 4.5rem)',
+          fontWeight: '600',
+          lineHeight: '1',
+          color: '#c4915a',
+          marginBottom: '1rem'
+        }}>October®</h1>
+        <p style={{
+          fontFamily: 'sans-serif',
+          fontSize: '14px',
+          color: '#a0612a',
+          opacity: 0.7
+        }}>Your e-commerce platform · 5 languages · Global payments</p>
       </div>
 
-      <h1 style={{
-        fontSize: "clamp(2.5rem, 8vw, 5rem)",
-        fontWeight: "600",
-        lineHeight: "1",
-        marginBottom: "0.5rem",
-        color: "#3d1f0a"
-      }}>
-        Online
-      </h1>
-      <h1 style={{
-        fontSize: "clamp(2.5rem, 8vw, 5rem)",
-        fontWeight: "600",
-        lineHeight: "1",
-        marginBottom: "1.5rem",
-        color: "#c4915a"
-      }}>
-        October®
-      </h1>
-
-      <p style={{
-        fontSize: "16px",
-        color: "#a0612a",
-        marginBottom: "2.5rem",
-        opacity: 0.8
-      }}>
-        Your store is live. Shop every season.
-      </p>
-
+      {/* Pages Grid */}
       <div style={{
-        display: "flex",
-        gap: "12px",
-        flexWrap: "wrap",
-        justifyContent: "center"
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+        gap: '12px',
+        maxWidth: '800px',
+        margin: '0 auto 3rem'
       }}>
-        <a href="/store" style={{
-          background: "#3d1f0a",
-          color: "#fff5e8",
-          padding: "12px 28px",
-          borderRadius: "999px",
-          textDecoration: "none",
-          fontSize: "14px",
-          fontWeight: "600",
-          fontFamily: "sans-serif"
-        }}>
-          Visit Store →
-        </a>
-        <a href="/admin" style={{
-          background: "transparent",
-          color: "#3d1f0a",
-          padding: "12px 28px",
-          borderRadius: "999px",
-          textDecoration: "none",
-          fontSize: "14px",
-          fontWeight: "600",
-          fontFamily: "sans-serif",
-          border: "1px solid #ddd0c0"
-        }}>
-          Admin Panel
-        </a>
+        {pages.map((page) => (
+          <a key={page.href} href={page.href} style={{
+            display: 'block',
+            background: '#fff',
+            border: '1px solid #e8d5c0',
+            borderRadius: '14px',
+            padding: '1.25rem 1.5rem',
+            textDecoration: 'none',
+            color: '#3d1f0a',
+            transition: 'all 0.2s',
+            fontFamily: 'sans-serif'
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = '#c4915a'
+            ;(e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)'
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = '#e8d5c0'
+            ;(e.currentTarget as HTMLElement).style.transform = 'translateY(0)'
+          }}>
+            <div style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>{page.emoji}</div>
+            <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '3px' }}>{page.label}</div>
+            <div style={{ fontSize: '12px', color: '#a0612a', opacity: 0.7 }}>{page.desc}</div>
+            <div style={{
+              marginTop: '0.875rem',
+              fontSize: '11px',
+              color: '#c4915a',
+              fontWeight: '600',
+              letterSpacing: '0.04em'
+            }}>OPEN →</div>
+          </a>
+        ))}
       </div>
 
+      {/* Status */}
       <div style={{
-        marginTop: "4rem",
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
-        gap: "12px",
-        maxWidth: "600px",
-        width: "100%"
+        maxWidth: '800px',
+        margin: '0 auto',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+        gap: '10px',
+        marginBottom: '2rem'
       }}>
         {[
-          { emoji: "🗄️", label: "Supabase", status: "Connected ✅" },
-          { emoji: "💳", label: "Stripe", status: "Coming soon" },
-          { emoji: "📧", label: "SendGrid", status: "Coming soon" },
-          { emoji: "🌍", label: "5 Languages", status: "Ready ✅" },
-        ].map((item) => (
+          { emoji: '🗄️', label: 'Supabase', status: 'Connected', ok: true },
+          { emoji: '💳', label: 'Stripe', status: 'Setup needed', ok: false },
+          { emoji: '📧', label: 'SendGrid', status: 'Setup needed', ok: false },
+          { emoji: '🌍', label: '5 Languages', status: 'Ready', ok: true },
+          { emoji: '🪙', label: 'Loyalty', status: 'Ready', ok: true },
+          { emoji: '🚚', label: 'Delivery', status: 'Ready', ok: true },
+        ].map(item => (
           <div key={item.label} style={{
-            background: "#fff",
-            border: "1px solid #e8d5c0",
-            borderRadius: "12px",
-            padding: "1rem",
-            fontFamily: "sans-serif"
+            background: '#fff',
+            border: '1px solid #e8d5c0',
+            borderRadius: '10px',
+            padding: '0.875rem',
+            fontFamily: 'sans-serif',
+            textAlign: 'center'
           }}>
-            <div style={{ fontSize: "1.5rem", marginBottom: "4px" }}>{item.emoji}</div>
-            <div style={{ fontSize: "12px", fontWeight: "600", color: "#3d1f0a" }}>{item.label}</div>
-            <div style={{ fontSize: "11px", color: "#a0612a", marginTop: "2px" }}>{item.status}</div>
+            <div style={{ fontSize: '1.25rem', marginBottom: '3px' }}>{item.emoji}</div>
+            <div style={{ fontSize: '11px', fontWeight: '600', color: '#3d1f0a' }}>{item.label}</div>
+            <div style={{
+              fontSize: '10px',
+              marginTop: '2px',
+              color: item.ok ? '#2d7a4a' : '#a0612a',
+              fontWeight: '600'
+            }}>{item.status} {item.ok ? '✅' : '⏳'}</div>
           </div>
         ))}
       </div>
 
       <p style={{
-        marginTop: "3rem",
-        fontSize: "11px",
-        color: "#a0612a",
-        opacity: 0.5,
-        fontFamily: "sans-serif"
-      }}>
-        © 2026 Online October · Built with Next.js + Supabase
-      </p>
+        textAlign: 'center',
+        fontFamily: 'sans-serif',
+        fontSize: '11px',
+        color: '#a0612a',
+        opacity: 0.4
+      }}>© 2026 Online October · Built with Next.js + Supabase · Hosted on Vercel</p>
     </main>
   )
 }

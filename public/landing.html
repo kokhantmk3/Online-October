@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online October</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500&family=Padauk:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#faf7f4;--white:#fff;--brown:#3d1f0a;--brown2:#6b3a1f;--brown3:#a0612a;--brown-light:#c4915a;--brown-pale:#e8d5c0;--border:#ddd0c0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--brown);overflow-x:hidden;}
+body.my *{font-family:'Padauk',sans-serif;}
+body.my .bebas{font-family:'Bebas Neue',sans-serif;}
+
+/* LANG BAR */
+.lang-bar{background:var(--brown);display:flex;justify-content:flex-end;padding:.5rem 1.5rem;gap:8px;position:relative;z-index:200;}
+.lang-btn{background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:999px;color:rgba(255,255,255,.55);font-size:12px;padding:4px 14px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;letter-spacing:.02em;}
+.lang-btn.active{background:var(--brown-light);border-color:var(--brown-light);color:#fff;font-weight:600;}
+.lang-btn:hover{color:#fff;border-color:rgba(255,255,255,.5);}
+
+/* TICKER */
+.ticker-wrap{background:var(--brown);color:var(--brown-pale);padding:9px 0;overflow:hidden;white-space:nowrap;}
+.ticker-track{display:inline-flex;animation:ticker 28s linear infinite;}
+.ticker-track span{font-size:12px;font-weight:500;letter-spacing:.04em;padding:0 2rem;}
+.ticker-track span::after{content:'·';margin-left:2rem;}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* NAV */
+nav{position:absolute;top:67px;left:0;right:0;z-index:100;padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;}
+.nav-tagline{font-size:12px;font-style:italic;color:rgba(255,255,255,.8);}
+.nav-center{display:flex;gap:2rem;}
+.nav-center a{text-decoration:none;font-size:13px;font-weight:500;color:#fff;opacity:.9;transition:opacity .2s;}
+.nav-center a:hover{opacity:1;}
+.nav-right{display:flex;align-items:center;gap:1.25rem;}
+.nav-right a{text-decoration:none;font-size:13px;color:#fff;opacity:.9;}
+.nav-icon{font-size:16px;cursor:pointer;color:#fff;}
+
+/* HERO */
+.hero{position:relative;height:100vh;min-height:500px;overflow:hidden;display:flex;align-items:flex-end;}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(135deg,#c4915a 0%,#a0612a 40%,#6b3a1f 100%);}
+.hero-scene{position:absolute;inset:0;overflow:hidden;}
+.city-gradient{position:absolute;inset:0;background:linear-gradient(180deg,#f0d5b0 0%,#d4a870 30%,#b07840 60%,#7a4820 80%,#4a2a10 100%);opacity:.6;}
+.city-buildings{position:absolute;bottom:35%;left:0;right:0;height:200px;}
+.bld{position:absolute;bottom:0;background:rgba(60,30,10,.5);}
+.b1{width:18px;height:120px;left:10%}.b2{width:30px;height:160px;left:13%}.b3{width:22px;height:100px;left:17%}.b4{width:40px;height:180px;left:20%}.b5{width:25px;height:140px;left:25%}.b6{width:50px;height:200px;left:29%}.b7{width:20px;height:130px;left:35%}.b8{width:35px;height:170px;left:38%}.b9{width:28px;height:150px;left:43%}.b10{width:45px;height:190px;left:47%}.b11{width:22px;height:110px;left:53%}.b12{width:38px;height:165px;left:56%}.b13{width:30px;height:145px;left:61%}.b14{width:55px;height:185px;left:65%}.b15{width:20px;height:125px;left:71%}.b16{width:42px;height:155px;left:74%}.b17{width:25px;height:135px;left:79%}.b18{width:35px;height:175px;left:82%}
+.street{position:absolute;bottom:0;left:0;right:0;height:35%;background:linear-gradient(180deg,#7a4820 0%,#4a2a10 40%,#2d1808 100%);}
+.road{position:absolute;bottom:0;left:30%;right:30%;height:100%;background:linear-gradient(180deg,#5a3418 0%,#3a2010 100%);}
+.road-line{position:absolute;left:50%;top:20%;bottom:0;width:3px;background:repeating-linear-gradient(180deg,rgba(255,220,160,.5) 0px,rgba(255,220,160,.5) 20px,transparent 20px,transparent 40px);transform:translateX(-50%);opacity:.5;}
+.figures{position:absolute;bottom:35%;left:0;right:0;height:120px;display:flex;align-items:flex-end;justify-content:center;gap:20px;}
+.fig{display:flex;flex-direction:column;align-items:center;}
+.fig1 .fig-body{width:18px;height:55px;background:#e8c090;border-radius:50px;}
+.fig1 .fig-head{width:14px;height:14px;border-radius:50%;background:#d4a070;margin-bottom:2px;}
+.fig2 .fig-body{width:20px;height:60px;background:#a06030;border-radius:50px;}
+.fig2 .fig-head{width:15px;height:15px;border-radius:50%;background:#c89060;margin-bottom:2px;}
+.fig3 .fig-body{width:22px;height:58px;background:#f0d8b0;border-radius:50px;}
+.fig3 .fig-head{width:16px;height:16px;border-radius:50%;background:#d4a870;margin-bottom:2px;}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(40,15,5,.55) 0%,rgba(40,15,5,.05) 50%,rgba(40,15,5,.25) 100%);}
+.hero-brand{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;text-align:center;pointer-events:none;}
+.hero-brand-en{font-family:'Bebas Neue',sans-serif;font-size:clamp(50px,14vw,130px);color:rgba(255,240,220,.92);letter-spacing:.02em;line-height:.88;}
+.hero-brand-my{font-family:'Padauk',sans-serif;font-size:clamp(36px,9vw,84px);color:rgba(255,240,220,.92);line-height:1.2;font-weight:700;}
+.hero-bottom{position:relative;z-index:10;padding:2rem;width:100%;display:flex;align-items:flex-end;justify-content:space-between;}
+.hero-subtitle-en{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.02em;color:#fff5e8;}
+.hero-subtitle-my{font-family:'Padauk',sans-serif;font-size:1.5rem;color:#fff5e8;font-weight:700;}
+.hero-season{font-size:11px;letter-spacing:.1em;color:rgba(255,230,200,.7);margin-bottom:.4rem;font-family:'Inter',sans-serif !important;}
+.hero-cta{display:inline-block;background:var(--white);color:var(--brown);border:none;border-radius:999px;padding:12px 28px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:1rem;transition:background .2s;}
+.hero-cta:hover{background:var(--brown-pale);}
+.hero-scroll-text{font-size:11px;color:rgba(255,230,200,.5);letter-spacing:.06em;writing-mode:vertical-rl;transform:rotate(180deg);font-family:'Inter',sans-serif !important;}
+
+/* CATEGORIES */
+.categories{background:var(--white);padding:3rem 2rem;}
+.section-label{font-size:11px;letter-spacing:.1em;color:var(--brown3);text-transform:uppercase;margin-bottom:1.5rem;font-weight:600;font-family:'Inter',sans-serif !important;}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:3px;}
+.cat-card{position:relative;aspect-ratio:3/4;overflow:hidden;cursor:pointer;}
+.cat-emoji-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:4rem;background:linear-gradient(135deg,var(--bg) 0%,var(--brown-pale) 100%);}
+.cat-overlay{position:absolute;inset:0;background:rgba(61,31,10,.35);display:flex;align-items:flex-end;padding:1rem;opacity:.8;transition:opacity .2s;}
+.cat-card:hover .cat-overlay{opacity:1;}
+.cat-name{font-size:13px;font-weight:600;letter-spacing:.04em;color:#fff5e8;}
+.cat-count{font-size:11px;color:rgba(255,230,200,.6);margin-top:2px;font-family:'Inter',sans-serif !important;}
+
+/* MARQUEE */
+.marquee-section{padding:1.75rem 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;background:var(--bg);}
+.marquee-track{display:inline-flex;animation:ticker 22s linear infinite;}
+.marquee-item-en{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:.05em;padding:0 2rem;color:var(--brown-pale);white-space:nowrap;}
+.marquee-item-my{font-family:'Padauk',sans-serif;font-size:1.8rem;padding:0 2rem;color:var(--brown-pale);white-space:nowrap;font-weight:700;line-height:2;}
+.accent{color:var(--brown3);}
+
+/* PRODUCTS */
+.products{background:var(--bg);padding:3rem 2rem;}
+.section-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2rem;}
+.section-heading-en{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:.03em;color:var(--brown);}
+.section-heading-my{font-family:'Padauk',sans-serif;font-size:1.7rem;color:var(--brown);font-weight:700;}
+.section-link{font-size:12px;letter-spacing:.06em;color:var(--brown3);text-decoration:none;border-bottom:1px solid var(--brown-light);padding-bottom:2px;}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:3px;}
+.prod-card{background:var(--white);cursor:pointer;transition:background .2s;}
+.prod-card:hover{background:var(--brown-pale);}
+.prod-img{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:3.5rem;background:#f5eee5;}
+.prod-info{padding:12px 10px;}
+.prod-cat-text{font-size:10px;color:var(--brown3);opacity:.6;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;font-family:'Inter',sans-serif !important;}
+.prod-name-text{font-size:12px;font-weight:500;color:var(--brown);margin-bottom:5px;}
+.prod-price{font-size:13px;font-weight:600;color:var(--brown2);font-family:'Inter',sans-serif !important;}
+
+/* ABOUT */
+.about-strip{background:var(--brown);color:var(--brown-pale);padding:3rem 2rem;display:flex;align-items:center;gap:3rem;flex-wrap:wrap;}
+.about-big-en{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,6vw,4rem);line-height:1;flex:1;min-width:200px;color:#fff5e8;}
+.about-big-my{font-family:'Padauk',sans-serif;font-size:clamp(1.4rem,4vw,2.4rem);line-height:1.4;flex:1;min-width:200px;color:#fff5e8;font-weight:700;}
+.about-text-wrap{flex:2;min-width:220px;}
+.about-text-wrap p{font-size:14px;line-height:1.8;color:var(--brown-pale);max-width:400px;}
+.about-btn{display:inline-block;margin-top:1.25rem;background:var(--white);color:var(--brown);border:none;border-radius:2px;padding:11px 24px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+.about-btn:hover{background:var(--brown-pale);}
+
+/* EMAIL */
+.email-section{background:var(--bg);padding:4rem 2rem;text-align:center;border-top:1px solid var(--border);}
+.email-heading-en{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.5rem);margin-bottom:.5rem;letter-spacing:.03em;color:var(--brown);}
+.email-heading-my{font-family:'Padauk',sans-serif;font-size:clamp(1.5rem,4vw,2.5rem);margin-bottom:.5rem;color:var(--brown);font-weight:700;}
+.email-sub-text{font-size:13px;color:var(--brown3);margin-bottom:2rem;opacity:.7;}
+.email-row{display:flex;max-width:400px;margin:0 auto;border:1px solid var(--border);border-radius:2px;overflow:hidden;flex-wrap:wrap;background:var(--white);}
+.email-row input{flex:1;min-width:180px;background:transparent;border:none;padding:13px 16px;font-family:'Inter',sans-serif;font-size:13px;color:var(--brown);outline:none;}
+.email-row input::placeholder{color:var(--brown3);opacity:.4;}
+.email-row button{background:var(--brown);color:#fff5e8;border:none;padding:13px 20px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:.04em;white-space:nowrap;}
+.email-row button:hover{background:var(--brown2);}
+
+/* FOOTER */
+footer{background:var(--brown);padding:2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+.foot-logo-en{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.05em;color:#fff5e8;line-height:1.1;}
+.foot-logo-my{font-family:'Padauk',sans-serif;font-size:1.1rem;color:#fff5e8;line-height:1.4;font-weight:700;}
+.foot-links{display:flex;gap:1.5rem;flex-wrap:wrap;}
+.foot-links a{font-size:11px;color:var(--brown-pale);opacity:.5;text-decoration:none;letter-spacing:.05em;}
+.foot-links a:hover{opacity:1;}
+.foot-copy{font-size:11px;color:var(--brown-pale);opacity:.3;font-family:'Inter',sans-serif !important;}
+</style>
+</head>
+<body>
+
+<!-- LANG BAR -->
+<div class="lang-bar">
+  <button class="lang-btn active" id="btn-en" onclick="setLang('en')">🇬🇧 English</button>
+  <button class="lang-btn" id="btn-my" onclick="setLang('my')">🇲🇲 မြန်မာ</button>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track" id="ticker"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-tagline" id="nav-tagline"></div>
+  <div class="nav-center" id="nav-center"></div>
+  <div class="nav-right">
+    <a href="#" id="nav-search"></a>
+    <span class="nav-icon">♡</span>
+    <span class="nav-icon">⊕</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg">
+    <div class="hero-scene">
+      <div class="city-gradient"></div>
+      <div class="city-buildings">
+        <div class="bld b1"></div><div class="bld b2"></div><div class="bld b3"></div>
+        <div class="bld b4"></div><div class="bld b5"></div><div class="bld b6"></div>
+        <div class="bld b7"></div><div class="bld b8"></div><div class="bld b9"></div>
+        <div class="bld b10"></div><div class="bld b11"></div><div class="bld b12"></div>
+        <div class="bld b13"></div><div class="bld b14"></div><div class="bld b15"></div>
+        <div class="bld b16"></div><div class="bld b17"></div><div class="bld b18"></div>
+      </div>
+      <div class="street"><div class="road"><div class="road-line"></div></div></div>
+      <div class="figures">
+        <div class="fig fig1"><div class="fig-head"></div><div class="fig-body"></div></div>
+        <div class="fig fig2"><div class="fig-head"></div><div class="fig-body"></div></div>
+        <div class="fig fig3"><div class="fig-head"></div><div class="fig-body"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-brand" id="hero-brand"></div>
+  <div class="hero-bottom">
+    <div>
+      <div class="hero-season">SS2026</div>
+      <div id="hero-subtitle"></div>
+      <button class="hero-cta" id="hero-cta"></button>
+    </div>
+    <div class="hero-scroll-text" id="hero-scroll"></div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="categories">
+  <div class="section-label" id="cat-label"></div>
+  <div class="cat-grid" id="cat-grid"></div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marquee"></div>
+</div>
+
+<!-- PRODUCTS -->
+<section class="products">
+  <div class="section-header">
+    <div id="prod-heading"></div>
+    <a href="#" class="section-link" id="prod-viewall"></a>
+  </div>
+  <div class="prod-grid" id="prod-grid"></div>
+</section>
+
+<!-- ABOUT -->
+<div class="about-strip">
+  <div id="about-big"></div>
+  <div class="about-text-wrap">
+    <p id="about-text"></p>
+    <button class="about-btn" id="about-btn"></button>
+  </div>
+</div>
+
+<!-- EMAIL -->
+<section class="email-section">
+  <div id="email-heading"></div>
+  <div class="email-sub-text" id="email-sub"></div>
+  <div class="email-row">
+    <input type="email" id="email-input" placeholder="your@email.com">
+    <button id="email-btn"></button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div id="foot-logo"></div>
+  <div class="foot-links" id="foot-links"></div>
+  <div class="foot-copy">© 2026 Online October</div>
+</footer>
+
+<script>
+const content = {
+  en: {
+    ticker: ['Free delivery over $50','New drop is live now','30 days easy returns & exchanges','Secure checkout always','Real-time order tracking'],
+    navTagline: "'shop every season'",
+    navLinks: ['Shop','New in','Collections','Track order'],
+    navSearch: 'Search',
+    heroBrand: '<div class="hero-brand-en">Online<br>October</div>',
+    heroSubtitle: '<div class="hero-subtitle-en">New Arrivals</div>',
+    heroCta: 'Shop Now',
+    heroScroll: 'Scroll to explore',
+    catLabel: 'Shop by category',
+    cats: [
+      {emoji:'🎧', name:'Electronics', count:'2 items'},
+      {emoji:'👟', name:'Footwear', count:'1 item'},
+      {emoji:'☕', name:'Home', count:'2 items'},
+      {emoji:'🧘', name:'Fitness', count:'1 item'},
+      {emoji:'🎒', name:'Accessories', count:'2 items'},
+    ],
+    marqueeItems: [
+      {text:'ONLINE OCTOBER', accent:false},
+      {text:'NEW ARRIVALS', accent:true},
+      {text:'SS2026', accent:false},
+      {text:'FREE DELIVERY', accent:true},
+      {text:'ONLINE OCTOBER', accent:false},
+      {text:'NEW ARRIVALS', accent:true},
+    ],
+    marqueeClass: 'marquee-item-en',
+    prodHeading: '<div class="section-heading-en">New In</div>',
+    prodViewAll: 'VIEW ALL',
+    products: [
+      {emoji:'🎧', cat:'Electronics', name:'Wireless Headphones', price:'$89.99'},
+      {emoji:'👟', cat:'Footwear', name:'Running Shoes', price:'$119.00'},
+      {emoji:'⌚', cat:'Electronics', name:'Smart Watch', price:'$249.99'},
+      {emoji:'☕', cat:'Home', name:'Coffee Maker', price:'$64.50'},
+      {emoji:'🧘', cat:'Fitness', name:'Yoga Mat', price:'$34.00'},
+      {emoji:'🎒', cat:'Accessories', name:'Backpack', price:'$75.00'},
+    ],
+    aboutBig: '<div class="about-big-en">Made for every season.</div>',
+    aboutText: 'Online October is built around one idea — that shopping online should be simple, honest, and feel good. No tricks, no endless ads. Just quality products, fair prices, and delivery you can actually track.',
+    aboutBtn: 'Our story',
+    emailHeading: '<div class="email-heading-en">Stay in the loop</div>',
+    emailSub: 'New drops, restocks, and exclusive offers — straight to your inbox.',
+    emailBtn: 'SUBSCRIBE',
+    footLogo: '<div class="foot-logo-en">Online<br>October</div>',
+    footLinks: ['Shop','Track order','Returns','About','Contact'],
+  },
+  my: {
+    ticker: ['$၅၀ အထက် အခမဲ့ပို့ဆောင်','ကုန်အသစ်ထွက်ပြီ','၃၀ ရက် လွယ်ကူစွာ ပြန်ပို့နိုင်','လုံခြုံသော ငွေပေးချေမှု','အချိန်နှင့်တပြေးညီ ခြေရာခံ'],
+    navTagline: "'နှစ်ရာသီတိုင်း ဈေးဝယ်ပါ'",
+    navLinks: ['ဈေးဆိုင်','အသစ်များ','စုစည်းမှု','အော်ဒါစစ်ဆေး'],
+    navSearch: 'ရှာဖွေ',
+    heroBrand: '<div class="hero-brand-my">အွန်လိုင်း<br>အောက်တိုဘာ</div>',
+    heroSubtitle: '<div class="hero-subtitle-my">ကုန်ပစ္
