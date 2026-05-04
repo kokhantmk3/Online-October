@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online October — Member Loyalty</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--brown:#3d1f0a;--brown2:#5c2e10;--brown3:#a0612a;--brown-light:#c4915a;--brown-pale:#e8d5c0;--white:#fff;--bg:#faf8f5;--border:#e0d0c0;--muted:#9a7a60;--green:#2d7a4a;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--brown);font-size:13px;min-height:100vh;}
+.site-header{background:var(--brown);padding:.875rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.site-logo{font-family:'Playfair Display',serif;font-size:1.2rem;color:#fff5e8;}
+.site-logo span{color:var(--brown-light);}
+.header-pts{font-size:12px;color:var(--brown-pale);opacity:.8;}
+.header-pts b{color:var(--brown-light);}
+.tabs{display:flex;background:#5c2e10;padding:.5rem 1.5rem;gap:6px;overflow-x:auto;}
+.tab{padding:7px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.55);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;}
+.tab.active{background:var(--brown-light);border-color:var(--brown-light);color:#fff;}
+.tab:hover:not(.active){color:#fff;}
+.page{display:none;animation:fadeIn .25s ease;}
+.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.loyalty-hero{background:linear-gradient(135deg,#3d1f0a 0%,#6b3a1f 50%,#a0612a 100%);padding:2rem 1.5rem;color:#fff5e8;position:relative;overflow:hidden;}
+.loyalty-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(196,145,90,.15);}
+.lh-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem;position:relative;z-index:1;}
+.lh-logo{font-family:'Playfair Display',serif;font-size:1rem;color:#fff5e8;}
+.lh-logo span{color:var(--brown-light);}
+.tier-pill{padding:4px 14px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;background:rgba(205,127,50,.25);color:#cd9d62;border:1px solid rgba(205,127,50,.4);}
+.lh-name{font-family:'Playfair Display',serif;font-size:1.6rem;margin-bottom:.25rem;position:relative;z-index:1;}
+.lh-id{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.1em;position:relative;z-index:1;}
+.points-row{display:flex;align-items:flex-end;gap:1.5rem;margin-top:1.5rem;position:relative;z-index:1;flex-wrap:wrap;}
+.points-big{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:600;color:#fff5e8;line-height:1;}
+.points-label{font-size:11px;color:var(--brown-light);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;}
+.points-divider{width:1px;height:40px;background:rgba(255,255,255,.15);}
+.points-val-sm{font-size:1.1rem;font-weight:600;color:#fff5e8;}
+.points-label-sm{font-size:11px;color:rgba(255,255,255,.45);}
+.progress-section{padding:1.25rem 1.5rem;background:var(--white);border-bottom:1px solid var(--border);}
+.progress-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;}
+.progress-text{font-size:12px;color:var(--muted);}
+.progress-next{font-size:12px;font-weight:600;color:var(--brown3);}
+.progress-bar{height:6px;background:var(--border);border-radius:999px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--brown) 0%,var(--brown-light) 100%);}
+.tier-steps{display:flex;justify-content:space-between;margin-top:.4rem;}
+.tier-step{font-size:10px;color:var(--muted);}
+.content{padding:1.25rem 1.5rem;max-width:700px;}
+.sec-title{font-family:'Playfair Display',serif;font-size:1rem;color:var(--brown);margin-bottom:.875rem;display:flex;align-items:center;gap:8px;}
+.sec-title span{font-family:'DM Sans',sans-serif;font-size:11px;font-style:normal;color:var(--muted);font-weight:400;}
+.perks-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:1.5rem;}
+.perk-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:.875rem;text-align:center;}
+.perk-icon{font-size:1.5rem;margin-bottom:.4rem;}
+.perk-name{font-size:11px;font-weight:600;color:var(--brown);margin-bottom:2px;}
+.perk-desc{font-size:10px;color:var(--muted);line-height:1.4;}
+.perk-card.active-perk{border-color:var(--brown-light);background:#fdf8f3;}
+.perk-card.locked{opacity:.4;}
+.earn-list{display:flex;flex-direction:column;gap:6px;margin-bottom:1.5rem;}
+.earn-item{display:flex;justify-content:space-between;padding:9px 12px;background:var(--white);border:1px solid var(--border);border-radius:8px;}
+.earn-item-pts{font-size:12px;font-weight:700;color:var(--brown3);}
+.tiers-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.5rem;}
+.tier-card{border-radius:10px;padding:.875rem .75rem;text-align:center;border:1.5px solid transparent;}
+.tier-card.current{border-color:var(--brown-light);}
+.tc-bronze{background:linear-gradient(135deg,#3d2008 0%,#5c3010 100%);}
+.tc-silver{background:linear-gradient(135deg,#2a2a2a 0%,#4a4a4a 100%);}
+.tc-gold{background:linear-gradient(135deg,#3d2e00 0%,#6b5000 100%);}
+.tc-platinum{background:linear-gradient(135deg,#1a1a1a 0%,#3a3a3a 100%);}
+.tc-icon{font-size:1.3rem;margin-bottom:.4rem;}
+.tc-name{font-size:11px;font-weight:700;letter-spacing:.05em;margin-bottom:2px;}
+.tc-bronze .tc-name{color:#cd9d62;}.tc-silver .tc-name{color:#c8c9cd;}.tc-gold .tc-name{color:#d4af37;}.tc-platinum .tc-name{color:#e5e4e2;}
+.tc-req{font-size:10px;color:rgba(255,255,255,.4);}
+.tc-mult{font-size:14px;font-weight:700;margin-top:.4rem;}
+.tc-bronze .tc-mult{color:#cd9d62;}.tc-silver .tc-mult{color:#c8c9cd;}.tc-gold .tc-mult{color:#d4af37;}.tc-platinum .tc-mult{color:#e5e4e2;}
+.you-badge{font-size:9px;background:var(--brown-light);color:#fff;padding:1px 6px;border-radius:999px;display:inline-block;margin-top:3px;}
+.benefits-wrap{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem;}
+.benefits-head{padding:.75rem 1rem;border-bottom:1px solid var(--border);font-weight:600;font-size:12px;color:var(--brown);}
+table{width:100%;border-collapse:collapse;font-size:11px;}
+th{padding:.6rem 1rem;text-align:left;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border);background:var(--bg);}
+th:not(:first-child){text-align:center;}
+td{padding:.55rem 1rem;border-bottom:1px solid #f5efe8;color:var(--brown);}
+td:not(:first-child){text-align:center;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fdf9f5;}
+.mini-card{background:linear-gradient(135deg,var(--brown) 0%,#6b3a1f 100%);border-radius:10px;padding:.875rem 1.1rem;color:#fff5e8;display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.mc-name{font-size:13px;font-weight:600;}.mc-tier{font-size:10px;color:var(--brown-light);margin-top:1px;}
+.mc-pts{font-size:1.2rem;font-weight:700;}.mc-pts-label{font-size:10px;color:rgba(255,255,255,.45);}
+.redeem-box{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1rem;margin-bottom:1rem;}
+.redeem-box-title{font-size:12px;font-weight:600;color:var(--brown);margin-bottom:.75rem;}
+.redeem-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.redeem-opt{border:1px solid var(--border);border-radius:8px;padding:.75rem;cursor:pointer;transition:all .15s;text-align:center;}
+.redeem-opt:hover{border-color:var(--brown-light);}
+.redeem-opt.selected{border-color:var(--brown);background:var(--bg);}
+.ro-pts{font-size:14px;font-weight:700;color:var(--brown);}
+.ro-val{font-size:11px;color:var(--muted);margin-top:1px;}
+.ro-off{font-size:11px;font-weight:600;color:var(--brown3);margin-top:3px;}
+.redeem-action-btn{width:100%;margin-top:.875rem;background:var(--brown);color:#fff5e8;border:none;border-radius:8px;padding:12px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s;}
+.redeem-action-btn:hover{background:var(--brown2);}
+.reward-item{display:flex;align-items:center;gap:12px;padding:.875rem;background:var(--white);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;}
+.ri-icon{font-size:1.5rem;flex-shrink:0;}
+.ri-info{flex:1;}
+.ri-name{font-size:13px;font-weight:600;color:var(--brown);}
+.ri-desc{font-size:11px;color:var(--muted);}
+.ri-pts{font-size:12px;font-weight:700;color:var(--brown3);}
+.ri-btn{font-size:11px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;color:var(--brown);margin-top:3px;font-family:'DM Sans',sans-serif;display:block;width:100%;transition:all .15s;}
+.ri-btn:hover{background:var(--brown-pale);}
+.history-wrap{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.history-item{display:flex;align-items:center;gap:10px;padding:.75rem 1rem;border-bottom:1px solid #f5efe8;}
+.history-item:last-child{border-bottom:none;}
+.h-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.h-dot.earn{background:#6fcf97;}.h-dot.redeem{background:#eb5757;}.h-dot.bonus{background:var(--brown-light);}
+.h-info{flex:1;}
+.h-name{font-size:12px;font-weight:500;color:var(--brown);}
+.h-date{font-size:10px;color:var(--muted);margin-top:1px;}
+.h-pts{font-size:13px;font-weight:700;}
+.h-pts.earn{color:#2d7a4a;}.h-pts.redeem{color:#c0392b;}.h-pts.bonus{color:var(--brown3);}
+.refer-box{background:linear-gradient(135deg,var(--brown) 0%,#6b3a1f 100%);border-radius:12px;padding:1.25rem;color:#fff5e8;text-align:center;margin-bottom:1rem;}
+.refer-title{font-family:'Playfair Display',serif;font-size:1rem;margin-bottom:.375rem;}
+.refer-sub{font-size:11px;color:var(--brown-pale);opacity:.8;margin-bottom:.875rem;line-height:1.6;}
+.refer-code-row{display:flex;gap:8px;}
+.refer-code{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:8px 12px;font-size:13px;font-weight:600;color:#fff5e8;letter-spacing:.06em;text-align:center;}
+.refer-copy-btn{background:var(--brown-light);border:none;border-radius:6px;padding:8px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:#fff;cursor:pointer;white-space:nowrap;}
+.referral-item{display:flex;align-items:center;gap:10px;padding:.75rem;background:var(--white);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;}
+.ref-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+.ref-name{font-size:12px;font-weight:600;color:var(--brown);}
+.ref-date{font-size:10px;color:var(--muted);}
+.ref-pts{font-size:12px;font-weight:700;color:var(--green);}
+.share-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:1rem;}
+.share-btn{padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--white);cursor:pointer;font-size:12px;color:var(--brown);font-family:'DM Sans',sans-serif;transition:all .15s;}
+.share-btn:hover{background:var(--brown-pale);}
+.checkout-loyalty-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1rem;}
+.cl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;}
+.cl-title{font-size:13px;font-weight:600;color:var(--brown);}
+.cl-pts-avail{font-size:12px;color:var(--brown3);}
+.cl-options{display:flex;flex-direction:column;gap:6px;}
+.cl-opt{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .15s;}
+.cl-opt:hover{border-color:var(--brown-light);}
+.cl-opt.selected{border-color:var(--brown);background:#fdf8f3;}
+.cl-opt input[type=radio]{accent-color:var(--brown);}
+.cl-opt-info{flex:1;font-size:12px;color:var(--brown);}
+.cl-opt-val{font-size:12px;font-weight:600;color:var(--brown3);}
+.earn-preview{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1rem;}
+.ep-title{font-size:12px;font-weight:600;color:var(--brown);margin-bottom:.75rem;}
+.ep-row{display:flex;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid #f5efe8;}
+.ep-row:last-child{border-bottom:none;}
+.ep-label{font-size:12px;color:var(--muted);}
+.ep-val{font-size:12px;font-weight:700;color:var(--brown3);}
+.ep-total{font-size:14px;font-weight:700;color:var(--green);}
+.motivation-box{background:linear-gradient(135deg,#1a3a08 0%,#2d6010 100%);border-radius:10px;padding:1rem;color:#c8f0a0;font-size:12px;line-height:1.6;}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--brown);color:#fff5e8;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:all .3s;pointer-events:none;z-index:999;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="site-logo">Online <span>October</span>®</div>
+  <div class="header-pts">🪙 <b>2,450 pts</b> · Bronze</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('card',this)">🪙 My Points</button>
+  <button class="tab" onclick="showTab('tiers',this)">🏆 Tiers</button>
+  <button class="tab" onclick="showTab('redeem',this)">🎁 Redeem</button>
+  <button class="tab" onclick="showTab('history',this)">📋 History</button>
+  <button class="tab" onclick="showTab('refer',this)">👥 Refer a Friend</button>
+  <button class="tab" onclick="showTab('checkout',this)">🛒 At Checkout</button>
+</div>
+
+<!-- MY POINTS -->
+<div class="page active" id="tab-card">
+  <div class="loyalty-hero">
+    <div class="lh-top">
+      <div class="lh-logo">Online <span>October</span>®</div>
+      <div class="tier-pill">🥉 BRONZE</div>
+    </div>
+    <div class="lh-name">Arisa Thongchai</div>
+    <div class="lh-id">MEMBER · #OO-2024-8821</div>
+    <div class="points-row">
+      <div><div class="points-label">Available points</div><div class="points-big">2,450</div></div>
+      <div class="points-divider"></div>
+      <div><div class="points-label-sm">Lifetime earned</div><div class="points-val-sm">4,120 pts</div></div>
+      <div class="points-divider"></div>
+      <div><div class="points-label-sm">Orders</div><div class="points-val-sm">7 orders</div></div>
+    </div>
+  </div>
+  <div class="progress-section">
+    <div class="progress-meta">
+      <div class="progress-text">2,450 pts · Bronze tier</div>
+      <div class="progress-next">1,550 pts to Silver 🥈</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:49%"></div></div>
+    <div class="tier-steps">
+      <span class="tier-step">🥉 0</span>
+      <span class="tier-step">🥈 4,000</span>
+      <span class="tier-step">🥇 10,000</span>
+      <span class="tier-step">💎 25,000</span>
+    </div>
+  </div>
+  <div class="content">
+    <div class="sec-title">Your active perks <span>Bronze tier</span></div>
+    <div class="perks-grid">
+      <div class="perk-card active-perk"><div class="perk-icon">✈️</div><div class="perk-name">Free shipping</div><div class="perk-desc">On orders over $50</div></div>
+      <div class="perk-card active-perk"><div class="perk-icon">🎂</div><div class="perk-name">Birthday bonus</div><div class="perk-desc">200 pts on your birthday</div></div>
+      <div class="perk-card active-perk"><div class="perk-icon">🪙</div><div class="perk-name">1× points</div><div class="perk-desc">1 pt per $1 spent</div></div>
+      <div class="perk-card active-perk"><div class="perk-icon">🏷️</div><div class="perk-name">Member prices</div><div class="perk-desc">Exclusive member deals</div></div>
+      <div class="perk-card locked"><div class="perk-icon">🎁</div><div class="perk-name">Early access</div><div class="perk-desc">Silver+ only 🔒</div></div>
+      <div class="perk-card locked"><div class="perk-icon">👤</div><div class="perk-name">Personal stylist</div><div class="perk-desc">Gold+ only 🔒</div></div>
+    </div>
+    <div class="sec-title">How to earn points</div>
+    <div class="earn-list">
+      <div class="earn-item"><span>💳 Purchase</span><span class="earn-item-pts">1 pt per $1</span></div>
+      <div class="earn-item"><span>👥 Refer a friend</span><span class="earn-item-pts">500 pts</span></div>
+      <div class="earn-item"><span>⭐ Write a review</span><span class="earn-item-pts">100 pts</span></div>
+      <div class="earn-item"><span>🎂 Birthday bonus</span><span class="earn-item-pts">200 pts</span></div>
+      <div class="earn-item"><span>📱 Follow on social</span><span class="earn-item-pts">50 pts</span></div>
+      <div class="earn-item"><span>🆕 Welcome bonus</span><span class="earn-item-pts">250 pts</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TIERS -->
+<div class="page" id="tab-tiers">
+  <div class="content" style="padding-top:1.25rem;">
+    <div class="sec-title">Membership tiers</div>
+    <div class="tiers-row">
+      <div class="tier-card tc-bronze current"><div class="tc-icon">🥉</div><div class="tc-name">BRONZE</div><div class="tc-req" style="color:rgba(205,127,50,.6)">0–3,999 pts</div><div class="tc-mult">1×</div><div class="you-badge">YOU ARE HERE</div></div>
+      <div class="tier-card tc-silver"><div class="tc-icon">🥈</div><div class="tc-name">SILVER</div><div class="tc-req">4,000–9,999</div><div class="tc-mult">1.5×</div></div>
+      <div class="tier-card tc-gold"><div class="tc-icon">🥇</div><div class="tc-name">GOLD</div><div class="tc-req">10,000–24,999</div><div class="tc-mult">2×</div></div>
+      <div class="tier-card tc-platinum"><div class="tc-icon">💎</div><div class="tc-name">PLATINUM</div><div class="tc-req">25,000+</div><div class="tc-mult">3×</div></div>
+    </div>
+    <div class="benefits-wrap">
+      <div class="benefits-head">Benefits comparison</div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Benefit</th><th style="color:#cd9d62;">🥉 Bronze</th><th style="color:#c8c9cd;">🥈 Silver</th><th style="color:#d4af37;">🥇 Gold</th><th style="color:#e5e4e2;">💎 Platinum</th></tr></thead>
+          <tbody>
+            <tr><td>Points multiplier</td><td style="color:#cd9d62;font-weight:700;">1×</td><td style="color:#c8c9cd;font-weight:700;">1.5×</td><td style="color:#d4af37;font-weight:700;">2×</td><td style="color:var(--brown-light);font-weight:700;">3×</td></tr>
+            <tr><td>Free shipping</td><td>Over $50</td><td>Over $30</td><td>Always</td><td>Always</td></tr>
+            <tr><td>Early access</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+            <tr><td>Birthday bonus</td><td>200 pts</td><td>400 pts</td><td>800 pts</td><td>1,500 pts</td></tr>
+            <tr><td>Personal stylist</td><td>❌</td><td>❌</td><td>✅</td><td>✅</td></tr>
+            <tr><td>Priority support</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+            <tr><td>Concierge service</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr>
+            <tr><td>Exclusive gifts</td><td>❌</td><td>❌</td><td>Annual gift</td><td>Quarterly gifts</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REDEEM -->
+<div class="page" id="tab-redeem">
+  <div class="content" style="padding-top:1.25rem;">
+    <div class="mini-card">
+      <div><div class="mc-name">Arisa Thongchai</div><div class="mc-tier">🥉 Bronze Member</div></div>
+      <div style="text-align:right;"><div class="mc-pts">2,450</div><div class="mc-pts-label">points available</div></div>
+    </div>
+    <div class="sec-title">Redeem for cash discounts</div>
+    <div class="redeem-box">
+      <div class="redeem-box-title">Choose how many points to use</div>
+      <div class="redeem-options">
+        <div class="redeem-opt" onclick="selectRedeem(this,500,'$5')"><div class="ro-pts">500 pts</div><div class="ro-val">= $5 off</div><div class="ro-off">Save $5</div></div>
+        <div class="redeem-opt selected" onclick="selectRedeem(this,1000,'$10')"><div class="ro-pts">1,000 pts</div><div class="ro-val">= $10 off</div><div class="ro-off">Save $10</div></div>
+        <div class="redeem-opt" onclick="selectRedeem(this,2000,'$20')"><div class="ro-pts">2,000 pts</div><div class="ro-val">= $20 off</div><div class="ro-off">Save $20</div></div>
+        <div class="redeem-opt" onclick="selectRedeem(this,2450,'$24.50')"><div class="ro-pts">2,450 pts</div><div class="ro-val">= $24.50 off</div><div class="ro-off">Use all!</div></div>
+      </div>
+      <button class="redeem-action-btn" id="redeem-action-btn" onclick="showToast('Points redeemed! Discount applied 🎉')">Redeem 1,000 points — $10 off</button>
+    </div>
+    <div class="sec-title">Redeem for rewards</div>
+    <div class="reward-item"><div class="ri-icon">🎁</div><div class="ri-info"><div class="ri-name">Free gift wrap</div><div class="ri-desc">Added to your next order</div></div><div style="text-align:right;"><div class="ri-pts">200 pts</div><button class="ri-btn" onclick="showToast('Gift wrap added! 🎁')">Redeem</button></div></div>
+    <div class="reward-item"><div class="ri-icon">✈️</div><div class="ri-info"><div class="ri-name">Free express shipping</div><div class="ri-desc">On your next order</div></div><div style="text-align:right;"><div class="ri-pts">500 pts</div><button class="ri-btn" onclick="showToast('Express shipping added! ✈️')">Redeem</button></div></div>
+    <div class="reward-item"><div class="ri-icon">👜</div><div class="ri-info"><div class="ri-name">Online October tote bag</div><div class="ri-desc">Exclusive member gift</div></div><div style="text-align:right;"><div class="ri-pts">1,500 pts</div><button class="ri-btn" onclick="showToast('Tote bag redeemed! 👜')">Redeem</button></div></div>
+    <div class="reward-item"><div class="ri-icon">🎽</div><div class="ri-info"><div class="ri-name">Exclusive member tee</div><div class="ri-desc">Gold+ only 🔒</div></div><div style="text-align:right;"><div class="ri-pts">3,000 pts</div><button class="ri-btn" style="opacity:.4;cursor:not-allowed;">Locked</button></div></div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="page" id="tab-history">
+  <div class="content" style="padding-top:1.25rem;">
+    <div class="sec-title">Points history</div>
+    <div class="history-wrap">
+      <div class="history-item"><div class="h-dot earn"></div><div class="h-info"><div class="h-name">Purchase — Wireless Headphones + Yoga Mat</div><div class="h-date">Apr 25, 2026 · #OO-4821</div></div><div class="h-pts earn">+320 pts</div></div>
+      <div class="history-item"><div class="h-dot bonus"></div><div class="h-info"><div class="h-name">Referral bonus — Marcus joined</div><div class="h-date">Apr 18, 2026</div></div><div class="h-pts bonus">+500 pts</div></div>
+      <div class="history-item"><div class="h-dot redeem"></div><div class="h-info"><div class="h-name">Redeemed — $10 discount on #OO-4788</div><div class="h-date">Apr 10, 2026</div></div><div class="h-pts redeem">−1,000 pts</div></div>
+      <div class="history-item"><div class="h-dot earn"></div><div class="h-info"><div class="h-name">Purchase — Backpack + Water Bottle</div><div class="h-date">Mar 30, 2026 · #OO-4710</div></div><div class="h-pts earn">+97 pts</div></div>
+      <div class="history-item"><div class="h-dot bonus"></div><div class="h-info"><div class="h-name">Birthday bonus 🎂</div><div class="h-date">Mar 15, 2026</div></div><div class="h-pts bonus">+200 pts</div></div>
+      <div class="history-item"><div class="h-dot bonus"></div><div class="h-info"><div class="h-name">Referral bonus — Priya joined</div><div class="h-date">Mar 10, 2026</div></div><div class="h-pts bonus">+500 pts</div></div>
+      <div class="history-item"><div class="h-dot earn"></div><div class="h-info"><div class="h-name">Review written — Running Shoes ⭐⭐⭐⭐⭐</div><div class="h-date">Mar 5, 2026</div></div><div class="h-pts earn">+100 pts</div></div>
+      <div class="history-item"><div class="h-dot earn"></div><div class="h-info"><div class="h-name">Follow on Instagram</div><div class="h-date">Feb 25, 2026</div></div><div class="h-pts earn">+50 pts</div></div>
+      <div class="history-item"><div class="h-dot bonus"></div><div class="h-info"><div class="h-name">Welcome bonus — joined Online October 🎉</div><div class="h-date">Feb 20, 2026</div></div><div class="h-pts bonus">+250 pts</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- REFER -->
+<div class="page" id="tab-refer">
+  <div class="content" style="padding-top:1.25rem;">
+    <div class="refer-box">
+      <div class="refer-title">Give $10, Get 500 points 🎁</div>
+      <div class="refer-sub">Share your code with friends. When they place their first order, they get $10 off and you earn 500 points automatically.</div>
+      <div class="refer-code-row">
+        <div class="refer-code">ARISA-OO2024</div>
+        <button class="refer-copy-btn" onclick="showToast('Referral link copied! 📋')">Copy link</button>
+      </div>
+    </div>
+    <div class="sec-title">Your referrals <span>2 friends joined</span></div>
+    <div class="referral-item"><div class="ref-avatar" style="background:var(--brown-light);">M</div><div style="flex:1;"><div class="ref-name">Marcus L.</div><div class="ref-date">Joined Apr 18, 2026 · 1 order placed</div></div><div class="ref-pts">+500 pts</div></div>
+    <div class="referral-item"><div class="ref-avatar" style="background:var(--brown);">P</div><div style="flex:1;"><div class="ref-name">Priya S.</div><div class="ref-date">Joined Mar 22, 2026 · 2 orders placed</div></div><div class="ref-pts">+500 pts</div></div>
+    <div class="sec-title" style="margin-top:1.25rem;">Share your link</div>
+    <div class="share-grid">
+      <button class="share-btn" onclick="showToast('Link copied! 📋')">📋 Copy link</button>
+      <button class="share-btn" onclick="showToast('Opening Line...')">💬 Line</button>
+      <button class="share-btn" onclick="showToast('Opening WhatsApp...')">📱 WhatsApp</button>
+      <button class="share-btn" onclick="showToast('Opening Facebook...')">📘 Facebook</button>
+      <button class="share-btn" onclick="showToast('Opening Instagram...')">📸 Instagram</button>
+      <button class="share-btn" onclick="showToast('Opening email...')">📧 Email</button>
+    </div>
+  </div>
+</div>
+
+<!-- AT CHECKOUT -->
+<div class="page" id="tab-checkout">
+  <div class="content" style="padding-top:1.25rem;">
+    <div class="sec-title">How it works at checkout</div>
+    <div class="mini-card">
+      <div><div class="mc-name">Arisa Thongchai</div><div class="mc-tier">🥉 Bronze · Earns 1× points on every order</div></div>
+      <div style="text-align:right;"><div class="mc-pts">2,450</div><div class="mc-pts-label">points available</div></div>
+    </div>
+    <div class="checkout-loyalty-box">
+      <div class="cl-header">
+        <div class="cl-title">🪙 Use your points</div>
+        <div class="cl-pts-avail">2,450 pts available</div>
+      </div>
+      <div class="cl-options">
+        <label class="cl-opt selected" onclick="selectClOpt(this)"><input type="radio" name="clopt" checked><div class="cl-opt-info">Use 1,000 points — save $10</div><div class="cl-opt-val">−$10</div></label>
+        <label class="cl-opt" onclick="selectClOpt(this)"><input type="radio" name="clopt"><div class="cl-opt-info">Use 2,000 points — save $20</div><div class="cl-opt-val">−$20</div></label>
+        <label class="cl-opt" onclick="selectClOpt(this)"><input type="radio" name="clopt"><div class="cl-opt-info">Save points for later</div><div class="cl-opt-val" style="color:var(--muted);">$0</div></label>
+      </div>
+    </div>
+    <div class="earn-preview">
+      <div class="ep-title">Points you'll earn on this order</div>
+      <div class="ep-row"><span class="ep-label">Order value ($198.99)</span><span class="ep-val">+199 pts</span></div>
+      <div class="ep-row"><span class="ep-label">Bronze multiplier</span><span class="ep-label">×1</span></div>
+      <div class="ep-row"><span class="ep-label" style="font-weight:600;color:var(--brown);">Total earned</span><span class="ep-total">+199 pts</span></div>
+    </div>
+    <div class="motivation-box">🎯 <b>After this order</b> you'll have <b>1,649 pts</b>. Only <b style="color:#fff;">2,351 pts away</b> from Silver tier — unlock 1.5× multiplier and early access to new drops!</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+function showTab(name,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+name).classList.add('active');btn.classList.add('active');}
+function selectRedeem(el,pts,val){document.querySelectorAll('.redeem-opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');document.getElementById('redeem-action-btn').textContent='Redeem '+pts.toLocaleString()+' points — '+val+' off';}
+function selectClOpt(el){document.querySelectorAll('.cl-opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2500);}
+</script>
+</body>
+</html>

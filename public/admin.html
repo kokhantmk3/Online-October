@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online October — Admin Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#faf7f4;--white:#fff;--brown:#3d1f0a;--brown2:#6b3a1f;--brown3:#a0612a;--brown-light:#c4915a;--brown-pale:#e8d5c0;--border:#ddd0c0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--brown);min-height:100vh;font-size:13px;}
+
+#login-screen{position:fixed;inset:0;background:var(--brown);display:flex;align-items:center;justify-content:center;z-index:999;padding:1rem;}
+#login-screen.hidden{display:none;}
+.login-box{background:var(--bg);border-radius:16px;padding:2rem;width:100%;max-width:360px;}
+.login-logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--brown);letter-spacing:.05em;line-height:1.1;margin-bottom:.25rem;}
+.login-sub{font-size:12px;color:var(--brown3);opacity:.7;margin-bottom:1.75rem;}
+.login-tabs{display:flex;gap:6px;margin-bottom:1.5rem;}
+.login-tab{flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:var(--brown3);cursor:pointer;transition:all .2s;}
+.login-tab.active{background:var(--brown);color:#fff5e8;border-color:var(--brown);}
+.form-group{margin-bottom:.875rem;}
+.form-group label{display:block;font-size:11px;font-weight:600;color:var(--brown3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.form-group input,.form-group select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;color:var(--brown);outline:none;background:var(--white);}
+.form-group input:focus{border-color:var(--brown-light);}
+.login-btn{width:100%;background:var(--brown);color:#fff5e8;border:none;border-radius:8px;padding:12px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:.5rem;transition:background .2s;}
+.login-btn:hover{background:var(--brown2);}
+.login-hint{font-size:11px;color:var(--brown3);opacity:.5;text-align:center;margin-top:1rem;line-height:1.7;}
+.login-error{background:#fdecea;color:#b00020;border-radius:6px;padding:8px 12px;font-size:12px;margin-bottom:.875rem;display:none;}
+.login-error.show{display:block;}
+
+#app{display:none;min-height:100vh;}
+#app.visible{display:flex;}
+.sidebar{width:220px;background:var(--brown);display:flex;flex-direction:column;flex-shrink:0;min-height:100vh;position:fixed;top:0;left:0;bottom:0;z-index:50;}
+.sb-logo{padding:1.25rem 1.25rem .875rem;border-bottom:1px solid rgba(255,255,255,.08);}
+.sb-logo-text{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#fff5e8;letter-spacing:.05em;line-height:1.1;}
+.sb-role-badge{display:inline-block;margin-top:5px;font-size:10px;padding:2px 10px;border-radius:999px;font-weight:600;letter-spacing:.04em;}
+.role-super{background:var(--brown-light);color:#fff;}
+.role-admin{background:rgba(255,255,255,.15);color:#e8d5c0;}
+.sb-nav{padding:.75rem 0;flex:1;}
+.sb-section{font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.3);padding:.6rem 1.25rem .3rem;text-transform:uppercase;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:.6rem 1.25rem;cursor:pointer;transition:background .15s;color:rgba(255,255,255,.6);font-size:13px;}
+.sb-item:hover{background:rgba(255,255,255,.06);color:#fff;}
+.sb-item.active{background:rgba(255,255,255,.12);color:#fff5e8;}
+.sb-icon{font-size:13px;width:16px;text-align:center;}
+.sb-footer{padding:.875rem 1.25rem;border-top:1px solid rgba(255,255,255,.08);}
+.sb-user{display:flex;align-items:center;gap:8px;}
+.sb-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.sb-uinfo{flex:1;min-width:0;}
+.sb-username{font-size:12px;color:rgba(255,255,255,.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-urole{font-size:10px;opacity:.4;color:#fff;}
+.logout-btn{background:none;border:none;color:rgba(255,255,255,.35);font-size:14px;cursor:pointer;padding:0;flex-shrink:0;}
+.logout-btn:hover{color:#fff;}
+
+.main{flex:1;display:flex;flex-direction:column;margin-left:220px;min-width:0;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;}
+.topbar-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.04em;color:var(--brown);}
+.store-tag{display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:11px;color:var(--brown3);}
+.content{padding:1.25rem;flex:1;}
+.panel{display:none;}
+.panel.active{display:block;}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:1.25rem;}
+.metric{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:.875rem;}
+.metric-label{font-size:10px;color:var(--brown3);opacity:.7;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem;}
+.metric-val{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--brown);}
+.metric-sub{font-size:11px;color:var(--brown3);opacity:.45;margin-top:1px;}
+
+.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem;}
+.table-head{padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px;}
+.table-title{font-weight:600;font-size:13px;color:var(--brown);}
+.search-input{padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-family:'Inter',sans-serif;font-size:12px;color:var(--brown);outline:none;background:var(--bg);}
+.search-input:focus{border-color:var(--brown-light);}
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:.65rem 1.25rem;font-size:10px;font-weight:600;color:var(--brown3);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:var(--bg);white-space:nowrap;}
+td{padding:.65rem 1.25rem;border-bottom:1px solid #f5efe8;color:var(--brown);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fdf9f5;}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:600;}
+.pill-super{background:#fdf0e6;color:#a0612a;border:1px solid #e8c090;}
+.pill-admin{background:#edf0fa;color:#3a5ab0;}
+.pill-green{background:#edf7ed;color:#1a6b1a;}
+.pill-amber{background:#fff3e0;color:#a05000;}
+.pill-red{background:#fdecea;color:#b00020;}
+.pill-blue{background:#e8f0fe;color:#1a4db5;}
+.pill-gray{background:#f3f0ec;color:#7a6050;}
+.btn{padding:6px 14px;border-radius:6px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
+.btn-primary{background:var(--brown);color:#fff5e8;}
+.btn-primary:hover{background:var(--brown2);}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--brown3);}
+.btn-outline:hover{border-color:var(--brown3);color:var(--brown);}
+.btn-sm{padding:4px 10px;font-size:11px;}
+.action-btns{display:flex;gap:5px;}
+.icon-btn{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:background .15s;}
+.icon-btn:hover{background:var(--brown-pale);}
+
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(40,15,5,.45);z-index:300;align-items:center;justify-content:center;padding:1rem;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--white);border-radius:14px;padding:1.5rem;width:100%;max-width:430px;animation:slideUp .2s ease;max-height:90vh;overflow-y:auto;}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--brown);letter-spacing:.04em;margin-bottom:1.25rem;}
+.fg{margin-bottom:.75rem;}
+.fg label{display:block;font-size:11px;font-weight:600;color:var(--brown3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px;}
+.fg input,.fg select{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-family:'Inter',sans-serif;font-size:13px;color:var(--brown);outline:none;background:var(--bg);}
+.fg input:focus,.fg select:focus{border-color:var(--brown-light);}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:1rem;padding-top:.875rem;border-top:1px solid var(--border);}
+.perm-section-label{font-size:11px;font-weight:600;color:var(--brown3);text-transform:uppercase;letter-spacing:.06em;margin:1rem 0 .5rem;}
+.perm-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.perm-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;}
+.perm-item:hover{border-color:var(--brown-light);}
+.perm-item.checked{background:var(--bg);border-color:var(--brown-light);}
+.perm-check{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;transition:all .15s;}
+.perm-item.checked .perm-check{background:var(--brown);border-color:var(--brown);color:#fff;}
+.perm-label{font-size:12px;color:var(--brown);}
+
+.act-item{display:flex;gap:10px;padding:.75rem 1.25rem;border-bottom:1px solid #f5efe8;align-items:flex-start;}
+.act-item:last-child{border-bottom:none;}
+.act-dot{width:7px;height:7px;border-radius:50%;background:var(--brown-light);margin-top:4px;flex-shrink:0;}
+.act-text{font-size:12px;color:var(--brown);line-height:1.5;}
+.act-time{font-size:11px;color:var(--brown3);opacity:.45;margin-top:2px;}
+
+.toast{position:fixed;bottom:20px;right:20px;background:var(--brown);color:#fff5e8;padding:10px 16px;border-radius:8px;font-size:12px;opacity:0;transition:all .3s;pointer-events:none;z-index:500;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Online<br>October</div>
+    <div class="login-sub">Admin Portal — Sign in to continue</div>
+    <div class="login-tabs">
+      <button class="login-tab active" onclick="setLoginRole('super',this)">⭐ Super Admin</button>
+      <button class="login-tab" onclick="setLoginRole('admin',this)">👤 Admin</button>
+    </div>
+    <div class="login-error" id="login-error">Incorrect email or password.</div>
+    <div class="form-group"><label>Email</label><input type="email" id="l-email" placeholder="Enter your email"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="login-btn" onclick="doLogin()">Sign in →</button>
+    <div class="login-hint">Super Admin: super@oo.com / super123<br>Admin: admin@oo.com / admin123</div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-text">Online<br>October</div>
+      <div id="role-badge" class="sb-role-badge role-super">⭐ Super Admin</div>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-section">My Store</div>
+      <div class="sb-item active" onclick="showPanel('dashboard',this)"><span class="sb-icon">▦</span> Dashboard</div>
+      <div class="sb-item" onclick="showPanel('products',this)"><span class="sb-icon">⊞</span> Products</div>
+      <div class="sb-item" onclick="showPanel('orders',this)"><span class="sb-icon">◫</span> Orders</div>
+      <div class="sb-item" onclick="showPanel('delivery',this)"><span class="sb-icon">◈</span> Delivery</div>
+      <div id="super-nav-section">
+        <div class="sb-section">Platform</div>
+        <div class="sb-item" onclick="showPanel('admins',this)"><span class="sb-icon">👥</span> Manage Admins</div>
+        <div class="sb-item" onclick="showPanel('stores',this)"><span class="sb-icon">🏪</span> All Stores</div>
+        <div class="sb-item" onclick="showPanel('roles',this)"><span class="sb-icon">🔑</span> Roles & Permissions</div>
+      </div>
+    </div>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-avatar" id="sb-avatar" style="background:var(--brown-light);">SA</div>
+        <div class="sb-uinfo">
+          <div class="sb-username" id="sb-username">Super Admin</div>
+          <div class="sb-urole" id="sb-urole">super@oo.com</div>
+        </div>
+        <button class="logout-btn" onclick="doLogout()" title="Logout">↩</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+      <span class="store-tag" id="store-label">My Store</span>
+    </div>
+    <div class="content">
+
+      <div class="panel active" id="panel-dashboard">
+        <div class="metrics" id="dash-metrics"></div>
+        <div class="table-wrap">
+          <div class="table-head"><div class="table-title">Recent activity</div></div>
+          <div id="dash-activity"></div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-products">
+        <div class="table-wrap">
+          <div class="table-head">
+            <div class="table-title">Products</div>
+            <div style="display:flex;gap:8px;">
+              <input class="search-input" placeholder="Search..." oninput="filterTable('prod-tbody',this.value,[0,1])">
+              <button class="btn btn-primary" onclick="openProdModal()">+ Add</button>
+            </div>
+          </div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Product</th><th>SKU</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="prod-tbody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-orders">
+        <div class="table-wrap">
+          <div class="table-head">
+            <div class="table-title">Orders</div>
+            <input class="search-input" placeholder="Search..." oninput="filterTable('orders-tbody',this.value,[0,1,2])">
+          </div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Order ID</th><th>Customer</th><th>Product</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="orders-tbody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-delivery">
+        <div class="table-wrap">
+          <div class="table-head"><div class="table-title">Delivery Tracking</div></div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Order ID</th><th>Customer</th><th>Product</th><th>Destination</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="del-tbody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-admins">
+        <div class="table-wrap">
+          <div class="table-head">
+            <div class="table-title">All Admins</div>
+            <div style="display:flex;gap:8px;">
+              <input class="search-input" placeholder="Search..." oninput="filterTable('admins-tbody',this.value,[0,1,3])">
+              <button class="btn btn-primary" onclick="openAdminModal()">+ Add admin</button>
+            </div>
+          </div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Store</th><th>Permissions</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="admins-tbody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-stores">
+        <div class="table-wrap">
+          <div class="table-head">
+            <div class="table-title">All Stores</div>
+            <button class="btn btn-primary" onclick="showToast('Coming soon!')">+ Add store</button>
+          </div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Store name</th><th>Owner</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="stores-tbody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-roles">
+        <div class="metrics">
+          <div class="metric"><div class="metric-label">Total roles</div><div class="metric-val">2</div><div class="metric-sub">Super Admin · Admin</div></div>
+          <div class="metric"><div class="metric-label">Super admins</div><div class="metric-val" id="count-super">1</div></div>
+          <div class="metric"><div class="metric-label">Admins</div><div class="metric-val" id="count-admin">2</div></div>
+          <div class="metric"><div class="metric-label">Active</div><div class="metric-val" id="count-active">3</div></div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-head"><div class="table-title">Role definitions</div></div>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>Role</th><th>Own store</th><th>Manage products</th><th>Manage orders</th><th>View all stores</th><th>Manage admins</th><th>Edit roles</th></tr></thead>
+              <tbody>
+                <tr><td><span class="pill pill-super">⭐ Super Admin</span></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+                <tr><td><span class="pill pill-admin">👤 Admin</span></td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-bg" id="prod-modal">
+  <div class="modal">
+    <div class="modal-title" id="prod-modal-title">Add Product</div>
+    <div class="fg"><label>Product name</label><input type="text" id="pm-name" placeholder="e.g. Wireless Headphones"></div>
+    <div class="fg2">
+      <div class="fg"><label>Price ($)</label><input type="number" id="pm-price" placeholder="0.00" step="0.01"></div>
+      <div class="fg"><label>Stock qty</label><input type="number" id="pm-stock" placeholder="0"></div>
+    </div>
+    <div class="fg2">
+      <div class="fg"><label>SKU</label><input type="text" id="pm-sku" placeholder="XX-000"></div>
+      <div class="fg"><label>Emoji</label><input type="text" id="pm-emoji" placeholder="📦" maxlength="2"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('prod-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProd()">Save product</button>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER MODAL -->
+<div class="modal-bg" id="order-modal">
+  <div class="modal">
+    <div class="modal-title">Update Order Status</div>
+    <div class="fg"><label>Order ID</label><input type="text" id="om-id" readonly style="opacity:.6"></div>
+    <div class="fg"><label>Customer</label><input type="text" id="om-customer" readonly style="opacity:.6"></div>
+    <div class="fg"><label>New status</label>
+      <select id="om-status">
+        <option value="1">Pending</option><option value="2">Packed</option>
+        <option value="3">In Transit</option><option value="4">Delivered</option>
+      </select>
+    </div>
+    <div class="fg"><label>Notes (optional)</label><input type="text" id="om-notes" placeholder="e.g. dispatched via Kerry Express"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('order-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveOrder()">Update</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="modal-bg" id="admin-modal">
+  <div class="modal">
+    <div class="modal-title" id="admin-modal-title">Add Admin</div>
+    <div class="fg"><label>Full name</label><input type="text" id="am-name" placeholder="e.g. Sara Smith"></div>
+    <div class="fg"><label>Email</label><input type="email" id="am-email" placeholder="sara@store.com"></div>
+    <div class="fg2">
+      <div class="fg"><label>Role</label>
+        <select id="am-role" onchange="onRoleChange()">
+          <option value="admin">👤 Admin</option>
+          <option value="super">⭐ Super Admin</option>
+        </select>
+      </div>
+      <div class="fg"><label>Password</label><input type="text" id="am-pass" placeholder="Set password"></div>
+    </div>
+    <div class="fg"><label>Store name</label><input type="text" id="am-store" placeholder="e.g. Sara's Shop"></div>
+    <div id="perm-section">
+      <div class="perm-section-label">Permissions</div>
+      <div class="perm-grid" id="perm-grid"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('admin-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAdmin()">Save admin</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PERMS=['Manage products','Manage orders','View delivery','Edit landing page','View reports'];
+const stepMap={1:'Pending',2:'Packed',3:'In Transit',4:'Delivered'};
+const pillMap={1:'pill-gray',2:'pill-amber',3:'pill-blue',4:'pill-green'};
+let loginRole='super',currentUser=null,editingProdId=null,editingOrderId=null,editingAdminId=null;
+
+let admins=[
+  {id:1,name:'Super Admin',email:'super@oo.com',pass:'super123',role:'super',store:'Online October HQ',active:true,perms:PERMS},
+  {id:2,name:'John Store',email:'admin@oo.com',pass:'admin123',role:'admin',store:"John's Gadgets",active:true,perms:['Manage products','Manage orders','View delivery']},
+  {id:3,name:'Nadia Shop',email:'nadia@oo.com',pass:'nadia123',role:'admin',store:"Nadia's Fashion",active:true,perms:['Manage products','Manage orders']},
+];
+let products=[
+  {id:1,name:"Wireless Headphones",sku:"WH-001",price:89.99,stock:42,emoji:"🎧"},
+  {id:2,name:"Running Shoes",sku:"RS-204",price:119.00,stock:8,emoji:"👟"},
+  {id:3,name:"Smart Watch",sku:"SW-009",price:249.99,stock:0,emoji:"⌚"},
+  {id:4,name:"Coffee Maker",sku:"CM-033",price:64.50,stock:17,emoji:"☕"},
+  {id:5,name:"Yoga Mat",sku:"YM-012",price:34.00,stock:55,emoji:"🧘"},
+  {id:6,name:"Backpack",sku:"BP-021",price:75.00,stock:29,emoji:"🎒"},
+];
+let orders=[
+  {id:"#ORD-4821",customer:"Arisa T.",item:"Wireless Headphones",date:"Apr 25",dest:"Bangkok 10110",step:3},
+  {id:"#ORD-4756",customer:"Marcus L.",item:"Yoga Mat",date:"Apr 20",dest:"Chiang Mai 50000",step:4},
+  {id:"#ORD-4801",customer:"Priya S.",item:"Smart Watch",date:"Apr 27",dest:"Phuket 83000",step:2},
+  {id:"#ORD-4788",customer:"James K.",item:"Coffee Maker",date:"Apr 28",dest:"Bangkok 10400",step:1},
+  {id:"#ORD-4710",customer:"Nadia R.",item:"Running Shoes",date:"Apr 15",dest:"Pattaya 20150",step:4},
+  {id:"#ORD-4833",customer:"Tom W.",item:"Backpack",date:"Apr 26",dest:"Bangkok 10600",step:3},
+];
+
+function setLoginRole(r,el){loginRole=r;document.querySelectorAll('.login-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
+function doLogin(){
+  const email=document.getElementById('l-email').value.trim();
+  const pass=document.getElementById('l-pass').value;
+  const err=document.getElementById('login-error');
+  const user=admins.find(a=>a.email===email&&a.pass===pass&&a.role===loginRole&&a.active);
+  if(!user){err.classList.add('show');return;}
+  err.classList.remove('show');currentUser=user;
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app').classList.add('visible');
+  setupUI();
+}
+function doLogout(){
+  currentUser=null;
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('l-email').value='';document.getElementById('l-pass').value='';
+  document.getElementById('login-error').classList.remove('show');
+}
+function setupUI(){
+  const isSuper=currentUser.role==='super';
+  const rb=document.getElementById('role-badge');
+  rb.textContent=isSuper?'⭐ Super Admin':'👤 Admin';
+  rb.className='sb-role-badge '+(isSuper?'role-super':'role-admin');
+  document.getElementById('sb-username').textContent=currentUser.name;
+  document.getElementById('sb-urole').textContent=currentUser.email;
+  document.getElementById('sb-avatar').textContent=currentUser.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('sb-avatar').style.background=isSuper?'var(--brown-light)':'#5a7ab5';
+  document.getElementById('store-label').textContent=currentUser.store;
+  document.getElementById('super-nav-section').style.display=isSuper?'':'none';
+  renderDashboard();renderProducts();renderOrders();renderDelivery();
+  if(isSuper){renderAdmins();renderStores();updateRoleCounts();}
+  showPanel('dashboard',document.querySelector('.sb-item'));
+}
+function renderDashboard(){
+  const isSuper=currentUser.role==='super';
+  document.getElementById('dash-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Products</div><div class="metric-val">${products.length}</div><div class="metric-sub">${products.filter(p=>p.stock===0).length} out of stock</div></div>
+    <div class="metric"><div class="metric-label">Orders</div><div class="metric-val">${orders.length}</div><div class="metric-sub">${orders.filter(o=>o.step===3).length} in transit</div></div>
+    <div class="metric"><div class="metric-label">Delivered</div><div class="metric-val">${orders.filter(o=>o.step===4).length}</div></div>
+    ${isSuper?`<div class="metric"><div class="metric-label">Total admins</div><div class="metric-val">${admins.length}</div></div><div class="metric"><div class="metric-label">Stores</div><div class="metric-val">${admins.length}</div></div>`:''}`;
+  document.getElementById('dash-activity').innerHTML=`
+    <div class="act-item"><div class="act-dot"></div><div><div class="act-text">Order <b>#ORD-4833</b> — Backpack by Tom W. in transit</div><div class="act-time">2 hours ago</div></div></div>
+    <div class="act-item"><div class="act-dot"></div><div><div class="act-text">Order <b>#ORD-4756</b> delivered to Marcus L. in Chiang Mai</div><div class="act-time">5 hours ago</div></div></div>
+    <div class="act-item"><div class="act-dot"></div><div><div class="act-text"><b>Running Shoes</b> stock is low — only 8 units left</div><div class="act-time">Yesterday</div></div></div>
+    ${isSuper?`<div class="act-item"><div class="act-dot"></div><div><div class="act-text">New admin <b>Nadia Shop</b> added to the platform</div><div class="act-time">2 days ago</div></div></div>`:''}`;
+}
+function renderProducts(){
+  document.getElementById('prod-tbody').innerHTML=products.map(p=>{
+    const st=p.stock===0?'pill-red':p.stock<=10?'pill-amber':'pill-green';
+    const sl=p.stock===0?'Out of stock':p.stock<=10?'Low stock':'In stock';
+    return`<tr><td>${p.emoji} <b>${p.name}</b></td><td style="color:var(--brown3)">${p.sku}</td><td>$${p.price.toFixed(2)}</td><td>${p.stock}</td>
+    <td><span class="pill ${st}">${sl}</span></td>
+    <td><div class="action-btns"><button class="icon-btn" onclick="editProd(${p.id})">✎</button><button class="icon-btn" onclick="delProd(${p.id})" style="border-color:#f5c6c6;color:#b00020;">✕</button></div></td></tr>`;
+  }).join('');
+}
+function openProdModal(){editingProdId=null;document.getElementById('prod-modal-title').textContent='Add Product';['pm-name','pm-sku','pm-price','pm-stock','pm-emoji'].forEach(i=>document.getElementById(i).value='');document.getElementById('prod-modal').classList.add('open');}
+function editProd(id){const p=products.find(x=>x.id===id);editingProdId=id;document.getElementById('prod-modal-title').textContent='Edit Product';document.getElementById('pm-name').value=p.name;document.getElementById('pm-sku').value=p.sku;document.getElementById('pm-price').value=p.price;document.getElementById('pm-stock').value=p.stock;document.getElementById('pm-emoji').value=p.emoji;document.getElementById('prod-modal').classList.add('open');}
+function saveProd(){const n=document.getElementById('pm-name').value.trim();if(!n){showToast('Please enter a product name.');return;}if(editingProdId){const p=products.find(x=>x.id===editingProdId);p.name=n;p.sku=document.getElementById('pm-sku').value;p.price=parseFloat(document.getElementById('pm-price').value)||0;p.stock=parseInt(document.getElementById('pm-stock').value)||0;p.emoji=document.getElementById('pm-emoji').value||'📦';showToast('Product updated!');}else{products.push({id:Date.now(),name:n,sku:document.getElementById('pm-sku').value,price:parseFloat(document.getElementById('pm-price').value)||0,stock:parseInt(document.getElementById('pm-stock').value)||0,emoji:document.getElementById('pm-emoji').value||'📦'});showToast('Product added!');}closeModal('prod-modal');renderProducts();renderDashboard();}
+function delProd(id){if(!confirm('Delete this product?'))return;products=products.filter(p=>p.id!==id);renderProducts();renderDashboard();showToast('Product deleted.');}
+function renderOrders(){document.getElementById('orders-tbody').innerHTML=orders.map(o=>`<tr><td><b>${o.id}</b></td><td>${o.customer}</td><td>${o.item}</td><td style="color:var(--brown3)">${o.date}</td><td><span class="pill ${pillMap[o.step]}">${stepMap[o.step]}</span></td><td><button class="btn btn-outline btn-sm" onclick="openOrderModal('${o.id}')">Update</button></td></tr>`).join('');}
+function renderDelivery(){document.getElementById('del-tbody').innerHTML=orders.map(o=>`<tr><td><b>${o.id}</b></td><td>${o.customer}</td><td>${o.item}</td><td style="font-size:12px;color:var(--brown3)">${o.dest}</td><td><span class="pill ${pillMap[o.step]}">${stepMap[o.step]}</span></td><td><button class="btn btn-outline btn-sm" onclick="openOrderModal('${o.id}')">Update</button></td></tr>`).join('');}
+function openOrderModal(id){editingOrderId=id;const o=orders.find(x=>x.id===id);document.getElementById('om-id').value=id;document.getElementById('om-customer').value=o.customer;document.getElementById('om-status').value=o.step;document.getElementById('om-notes').value='';document.getElementById('order-modal').classList.add('open');}
+function saveOrder(){const s=parseInt(document.getElementById('om-status').value);const o=orders.find(x=>x.id===editingOrderId);if(o)o.step=s;closeModal('order-modal');renderOrders();renderDelivery();renderDashboard();showToast('Order updated!');}
+function renderAdmins(){document.getElementById('admins-tbody').innerHTML=admins.map(a=>`<tr><td><b>${a.name}</b></td><td style="color:var(--brown3);font-size:12px">${a.email}</td><td><span class="pill ${a.role==='super'?'pill-super':'pill-admin'}">${a.role==='super'?'⭐ Super':'👤 Admin'}</span></td><td style="font-size:12px">${a.store}</td><td style="font-size:11px;color:var(--brown3)">${a.perms.length} permissions</td><td><span class="pill ${a.active?'pill-green':'pill-red'}">${a.active?'Active':'Suspended'}</span></td><td><div class="action-btns"><button class="icon-btn" onclick="editAdmin(${a.id})">✎</button><button class="icon-btn" onclick="toggleAdmin(${a.id})">${a.active?'🔒':'🔓'}</button>${a.id!==currentUser.id?`<button class="icon-btn" onclick="delAdmin(${a.id})" style="border-color:#f5c6c6;color:#b00020;">✕</button>`:''}</div></td></tr>`).join('');}
+function renderStores(){document.getElementById('stores-tbody').innerHTML=admins.map(a=>`<tr><td><b>${a.store}</b></td><td>${a.name}</td><td><span class="pill ${a.role==='super'?'pill-super':'pill-admin'}">${a.role==='super'?'⭐ Super':'👤 Admin'}</span></td><td><span class="pill ${a.active?'pill-green':'pill-red'}">${a.active?'Active':'Suspended'}</span></td><td><button class="btn btn-outline btn-sm" onclick="showToast('Viewing ${a.store}...')">View</button></td></tr>`).join('');}
+function updateRoleCounts(){document.getElementById('count-super').textContent=admins.filter(a=>a.role==='super').length;document.getElementById('count-admin').textContent=admins.filter(a=>a.role==='admin').length;document.getElementById('count-active').textContent=admins.filter(a=>a.active).length;}
+function openAdminModal(){editingAdminId=null;document.getElementById('admin-modal-title').textContent='Add Admin';['am-name','am-email','am-store','am-pass'].forEach(i=>document.getElementById(i).value='');document.getElementById('am-role').value='admin';document.getElementById('perm-section').style.display='';renderPermGrid([]);document.getElementById('admin-modal').classList.add('open');}
+function editAdmin(id){const a=admins.find(x=>x.id===id);editingAdminId=id;document.getElementById('admin-modal-title').textContent='Edit Admin';document.getElementById('am-name').value=a.name;document.getElementById('am-email').value=a.email;document.getElementById('am-store').value=a.store;document.getElementById('am-role').value=a.role;document.getElementById('am-pass').value=a.pass;document.getElementById('perm-section').style.display=a.role==='super'?'none':'';renderPermGrid(a.perms);document.getElementById('admin-modal').classList.add('open');}
+function onRoleChange(){document.getElementById('perm-section').style.display=document.getElementById('am-role').value==='super'?'none':'';}
+function renderPermGrid(checked){document.getElementById('perm-grid').innerHTML=PERMS.map(p=>{const on=checked.includes(p);return`<div class="perm-item${on?' checked':''}" onclick="togglePerm(this)"><div class="perm-check">${on?'✓':''}</div><div class="perm-label">${p}</div></div>`;}).join('');}
+function togglePerm(el){el.classList.toggle('checked');el.querySelector('.perm-check').textContent=el.classList.contains('checked')?'✓':'';}
+function getCheckedPerms(){return Array.from(document.getElementById('perm-grid').querySelectorAll('.perm-item.checked')).map(el=>el.querySelector('.perm-label').textContent);}
+function saveAdmin(){const name=document.getElementById('am-name').value.trim();const email=document.getElementById('am-email').value.trim();if(!name||!email){showToast('Name and email are required.');return;}const role=document.getElementById('am-role').value;const perms=role==='super'?PERMS:getCheckedPerms();if(editingAdminId){const a=admins.find(x=>x.id===editingAdminId);a.name=name;a.email=email;a.store=document.getElementById('am-store').value||a.store;a.role=role;a.perms=perms;if(document.getElementById('am-pass').value)a.pass=document.getElementById('am-pass').value;showToast('Admin updated!');}else{admins.push({id:Date.now(),name,email,pass:document.getElementById('am-pass').value||'pass123',role,store:document.getElementById('am-store').value||name+"'s Store",active:true,perms});showToast('Admin added!');}closeModal('admin-modal');renderAdmins();renderStores();updateRoleCounts();renderDashboard();}
+function toggleAdmin(id){if(id===currentUser.id){showToast("You can't suspend yourself!");return;}const a=admins.find(x=>x.id===id);a.active=!a.active;renderAdmins();updateRoleCounts();showToast(a.active?'Admin activated.':'Admin suspended.');}
+function delAdmin(id){if(id===currentUser.id){showToast("You can't delete yourself!");return;}if(!confirm('Remove this admin?'))return;admins=admins.filter(a=>a.id!==id);renderAdmins();renderStores();updateRoleCounts();renderDashboard();showToast('Admin removed.');}
+function showPanel(name,el){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active');document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));if(el)el.classList.add('active');const titles={dashboard:'Dashboard',products:'Products',orders:'Orders',delivery:'Delivery Tracking',admins:'Manage Admins',stores:'All Stores',roles:'Roles & Permissions'};document.getElementById('topbar-title').textContent=titles[name]||name;}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function filterTable(tbodyId,q,cols){document.getElementById(tbodyId).querySelectorAll('tr').forEach(r=>{const tds=r.querySelectorAll('td');const match=cols.some(c=>tds[c]&&tds[c].textContent.toLowerCase().includes(q.toLowerCase()));r.style.display=q&&!match?'none':'';});}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2500);}
+</script>
+</body>
+</html>
